@@ -1,12 +1,14 @@
 package grpc_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	pb "github.com/Goboolean/fetch-system.master/api/grpc"
 	server "github.com/Goboolean/fetch-system.master/internal/infrastructure/grpc"
 	"github.com/Goboolean/shared/pkg/resolver"
+	"github.com/stretchr/testify/assert"
 
 	_ "github.com/Goboolean/common/pkg/env"
 )
@@ -16,8 +18,23 @@ var (
 	client *server.Client
 )
 
+
+var (
+	registered = false
+	healthy    = false
+)
 type MockAdapter struct {
 	pb.UnimplementedWorkerServer
+}
+
+func (a *MockAdapter) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+	registered = true
+	return &pb.RegisterResponse{}, nil
+}
+
+func (a *MockAdapter) HealthCheck(ctx context.Context, req *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
+	healthy = true
+	return &pb.HealthCheckResponse{}, nil
 }
 
 
@@ -74,5 +91,15 @@ func Test_Constructor(t *testing.T) {
 
 
 func Test_Method(t *testing.T) {
-	
+	t.Run("Register", func(t *testing.T) {
+		_, err := client.Register(context.Background(), &pb.RegisterRequest{})
+		assert.NoError(t, err)
+		assert.True(t, registered)
+	})
+
+	t.Run("HealthCheck", func(t *testing.T) {
+		_, err := client.HealthCheck(context.Background(), &pb.HealthCheckRequest{})
+		assert.NoError(t, err)
+		assert.True(t, healthy)
+	})
 }
