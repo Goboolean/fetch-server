@@ -6,6 +6,7 @@ import (
 	pb "github.com/Goboolean/fetch-system.master/api/grpc"
 	"github.com/Goboolean/shared/pkg/resolver"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -33,6 +34,15 @@ func NewClient(c *resolver.ConfigMap) (*Client, error) {
 		WorkerClient: pb.NewWorkerClient(conn),
 		conn:                    conn,
 	}, nil
+}
+
+func (c *Client) Ping() error {
+	fmt.Println("ping")
+	state := c.conn.GetState()
+	if state != connectivity.Ready {
+		return fmt.Errorf("connection is not ready")
+	}
+	return nil
 }
 
 func (c *Client) Close() {
