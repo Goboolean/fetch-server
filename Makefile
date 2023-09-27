@@ -1,6 +1,5 @@
 sqlc-synchronize:
 	curl -s -L https://raw.githubusercontent.com/Goboolean/shared/main/api/sql/schema.sql -o ./api/sql/schema.sql; \
-	curl -s -L https://raw.githubusercontent.com/Goboolean/shared/main/api/sql/schema.test.sql -o ./api/sql/schema.test.sql; \
 
 sqlc-generate: \
 	sqlc-synchronize; \
