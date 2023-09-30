@@ -24,7 +24,10 @@ func GroupBy(list map[string]string, prefix string) []map[string]string {
 }
 
 
+func Mmarshal(i Model) (map[string]string, error) {
+	return nil, nil
+}
 
-func Marshal(str map[string]string, i interface{}) error {	
+func Unmarshal(str map[string]string, i Model) error {
 	return nil
 }

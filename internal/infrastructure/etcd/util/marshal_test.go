@@ -112,102 +112,6 @@ func Test_GroupBy(t *testing.T) {
 }
 
 
-var cases []struct {
-	name string
-	str map[string]string
-	model interface{}
-	data interface{}
-} = []struct{
-	name string
-	str map[string]string
-	model interface{}
-	data interface{}
-}{
-	{
-		name: "Worker",
-		str: map[string]string{
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
-		},
-		model: struct{
-			ID       string `etcd:"id"`
-			Platform string `etcd:"platform"`
-			Status   string `etcd:"status"`
-		} {},
-		data: struct{
-			ID       string `etcd:"id"`
-			Platform string `etcd:"platform"`
-			Status   string `etcd:"status"`
-		} {
-			ID: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			Platform: "kis",
-			Status: "active",
-		},
-	},
-	{
-		name: "Product",
-		str: map[string]string{
-			"product/test.goboolean.kor": "",
-			"product/test.goboolean.kor/platform": "kis",
-			"product/test.goboolean.kor/symbol": "goboolean",
-			"product/test.goboolean.kor/worker": "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			"product/test.goboolean.kor/status": "onsubscribe",
-		},
-		model: struct{
-			ID       string `etcd:"id"`
-			Platform string `etcd:"platform"`
-			Symbol   string `etcd:"symbol"`
-			Worker 	 string `etcd:"worker"`
-			Status   string `etcd:"status"`
-		} {},
-		data: struct{
-			ID       string `etcd:"id"`
-			Platform string `etcd:"platform"`
-			Symbol   string `etcd:"symbol"`
-			Worker 	 string `etcd:"worker"`
-			Status   string `etcd:"status"`
-		} {
-			ID: "test.goboolean.kor",
-			Platform: "kis",
-			Symbol: "goboolean",
-			Worker: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			Status: "onsubscribe",
-		},
-	},
-	{
-		name: "Nested Struct",
-		str: map[string]string{
-			"nested/mulmuri.dev": "",
-			"nested/mulmuri.dev/detail": "",
-			"nested/mulmuri.dev/detail/name": "goboolean",
-			"nested/mulmuri.dev/detail/age": "1",
-		},
-		model: struct{
-			ID string `etcd:"id"`
-			Detail struct{
-				Name string `etcd:"name"`
-				Age int `etcd:"age"`
-			} `etcd:"detail"`
-		} {},
-		data: struct{
-			ID string `etcd:"id"`
-			Detail struct{
-				Name string `etcd:"name"`
-				Age int `etcd:"age"`
-			} `etcd:"detail"`
-		} {
-			ID: "mulmuri.dev",
-			Detail: struct{
-				Name string `etcd:"name"`
-				Age int `etcd:"age"`
-			} {
-				Name: "goboolean",
-				Age: 1,
-			},
-		},
-	},
-}
 
 func deepCopy(src, dst interface{}) error {
 	var buf bytes.Buffer
@@ -234,7 +138,7 @@ func Test_Unmarshal(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			var input interface{}
+			var input etcdutil.Model
 			err := deepCopy(tt.data, &input)
 			assert.NoError(t, err)
 
