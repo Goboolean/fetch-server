@@ -56,9 +56,9 @@ var cases []struct {
 	{
 		name: "Worker",
 		str: map[string]string{
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
+			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
+			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
+			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
 		},
 		model: &Worker{},
 		data: &Worker{
@@ -70,9 +70,9 @@ var cases []struct {
 	{
 		name: "Worker",
 		str: map[string]string{
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
-			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
+			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
+			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
+			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
 		},
 		model: &Worker{},
 		data: &Worker{
@@ -84,11 +84,11 @@ var cases []struct {
 	{
 		name: "Product",
 		str: map[string]string{
-			"product/test.goboolean.kor": "",
-			"product/test.goboolean.kor/platform": "kis",
-			"product/test.goboolean.kor/symbol": "goboolean",
-			"product/test.goboolean.kor/worker": "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			"product/test.goboolean.kor/status": "onsubscribe",
+			"/product/test.goboolean.kor": "",
+			"/product/test.goboolean.kor/platform": "kis",
+			"/product/test.goboolean.kor/symbol": "goboolean",
+			"/product/test.goboolean.kor/worker": "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
+			"/product/test.goboolean.kor/status": "onsubscribe",
 		},
 		model: &Product{},
 		data: &Product{
