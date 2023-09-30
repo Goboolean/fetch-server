@@ -44,23 +44,6 @@ func GroupBy(list map[string]string) ([]map[string]string, error) {
 }
 
 
-// maybe unused: regarding to use formatting by t.(string)
-func toStringFormat(m Model, f reflect.StructField) string {
-	// TODO: fix float32 case problem
-	switch f.Type.Kind() {
-	case reflect.String:
-		return reflect.ValueOf(m).FieldByName(f.Name).String()
-	case reflect.Int | reflect.Int8 | reflect.Int16 | reflect.Int32 | reflect.Int64 | reflect.Uint | reflect.Uint8 | reflect.Uint16 | reflect.Uint32 | reflect.Float32:
-		return fmt.Sprintf("%d", reflect.ValueOf(m).FieldByName(f.Name).Int())
-	case reflect.Float64:
-		return fmt.Sprintf("%f", reflect.ValueOf(m).FieldByName(f.Name).Float())
-	case reflect.Bool:
-		return fmt.Sprintf("%t", reflect.ValueOf(m).FieldByName(f.Name).Bool())
-	default:
-		panic("not supported type")
-	}
-}
-
 
 func Mmarshal(m Model) (map[string]string, error) {
 	t := reflect.TypeOf(m)
@@ -209,4 +192,22 @@ func PayloadToMap(res *clientv3.GetResponse) map[string]string {
 	}
 
 	return result
+}
+
+
+// maybe unused: regarding to use formatting by t.(string)
+func toStringFormat(m Model, f reflect.StructField) string {
+	// TODO: fix float32 case problem
+	switch f.Type.Kind() {
+	case reflect.String:
+		return reflect.ValueOf(m).FieldByName(f.Name).String()
+	case reflect.Int | reflect.Int8 | reflect.Int16 | reflect.Int32 | reflect.Int64 | reflect.Uint | reflect.Uint8 | reflect.Uint16 | reflect.Uint32 | reflect.Float32:
+		return fmt.Sprintf("%d", reflect.ValueOf(m).FieldByName(f.Name).Int())
+	case reflect.Float64:
+		return fmt.Sprintf("%f", reflect.ValueOf(m).FieldByName(f.Name).Float())
+	case reflect.Bool:
+		return fmt.Sprintf("%t", reflect.ValueOf(m).FieldByName(f.Name).Bool())
+	default:
+		panic("not supported type")
+	}
 }
