@@ -41,51 +41,103 @@ func (n *Nested) Name() string {
 }
 
 
+type group struct {
+	str map[string]string
+	model etcdutil.Model
+	data etcdutil.Model
+}
 
 var cases []struct {
 	name string
-	str map[string]string
-	model etcdutil.Model
-	data etcdutil.Model
+	whole map[string]string
+	group []group
 } = []struct{
 	name string
-	str map[string]string
-	model etcdutil.Model
-	data etcdutil.Model
+	whole map[string]string
+	group []group
 }{
 	{
 		name: "Worker",
-		str: map[string]string{
-			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
-			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
-			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
+		whole: map[string]string{
+			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
+			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
+			"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "waiting",
+			"worker/b9992d7b-a926-483a-84f8-bbc05dee7886": "",
+			"worker/b9992d7b-a926-483a-84f8-bbc05dee7886/platform": "kis",
+			"worker/b9992d7b-a926-483a-84f8-bbc05dee7886/status": "active",
 		},
-		model: &Worker{},
-		data: &Worker{
-			ID: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			Platform: "kis",
-			Status: "active",
+		group: []group{
+			{
+				str: map[string]string{
+					"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
+					"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
+					"worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "waiting",
+				},
+				model: &Worker{},
+				data: &Worker{
+					ID: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
+					Platform: "kis",
+					Status: "waiting",
+				},
+			},
+			{
+				str: map[string]string{
+					"worker/b9992d7b-a926-483a-84f8-bbc05dee7886": "",
+					"worker/b9992d7b-a926-483a-84f8-bbc05dee7886/platform": "kis",
+					"worker/b9992d7b-a926-483a-84f8-bbc05dee7886/status": "active",
+				},
+				model: &Worker{},
+				data: &Worker{
+					ID: "b9992d7b-a926-483a-84f8-bbc05dee7886",
+					Platform: "kis",
+					Status: "active",
+				},
+			},
 		},
 	},
 	{
 		name: "Product",
-		str: map[string]string{
-			"/product/test.goboolean.kor": "",
-			"/product/test.goboolean.kor/platform": "kis",
-			"/product/test.goboolean.kor/symbol": "goboolean",
-			"/product/test.goboolean.kor/worker": "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			"/product/test.goboolean.kor/status": "onsubscribe",
-		},
-		model: &Product{},
-		data: &Product{
-			ID: "test.goboolean.kor",
-			Platform: "kis",
-			Symbol: "goboolean",
-			Worker: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			Status: "onsubscribe",
+		whole: map[string]string{},
+		group: []group{
+			{
+				str: map[string]string{
+					"/product/test.goboolean.kor": "",
+					"/product/test.goboolean.kor/platform": "kis",
+					"/product/test.goboolean.kor/symbol": "goboolean",
+					"/product/test.goboolean.kor/worker": "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
+					"/product/test.goboolean.kor/status": "onsubscribe",
+				},
+				model: &Product{},
+				data: &Product{
+					ID: "test.goboolean.kor",
+					Platform: "kis",
+					Symbol: "goboolean",
+					Worker: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
+					Status: "onsubscribe",
+				},
+			},
+			{
+				str: map[string]string{
+					"/product/test.goboolean.eng": "",
+					"/product/test.goboolean.eng/platform": "polygon",
+					"/product/test.goboolean.eng/symbol": "gofalse",
+					"/product/test.goboolean.eng/worker": "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
+					"/product/test.goboolean.eng/status": "onsubscribe",
+				},
+				model: &Product{},
+				data: &Product{
+					ID: "test.goboolean.eng",
+					Platform: "polygon",
+					Symbol: "gofalse",
+					Worker: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
+					Status: "onsubscribe",
+				},
+			},
 		},
 	},
-	/*
+}
+
+/*
 	{
 		name: "Nested Struct",
 		str: map[string]string{
@@ -106,5 +158,4 @@ var cases []struct {
 			},
 		},
 	},
-	*/
-}
+*/
