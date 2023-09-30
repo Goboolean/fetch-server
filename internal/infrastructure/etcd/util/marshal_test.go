@@ -26,7 +26,7 @@ func Test_GroupBy(t *testing.T) {
 		list   map[string]string
 		prefix string
 	}
-
+/*
 	tests := []struct {
 		name    string
 		args    args
@@ -96,13 +96,14 @@ func Test_GroupBy(t *testing.T) {
 			wantLen: 2,
 		},
 	}
-
-	for _, tt := range tests {
+*/
+	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			got := etcdutil.GroupBy(tt.args.list, tt.args.prefix)
-			assert.Equal(t, tt.wantLen, len(got))
-			for _, v := range got {
-				assert.True(t, Contains(tt.want, v))
+			got, err := etcdutil.GroupBy(tt.whole)
+			assert.NoError(t, err)
+			assert.Equal(t, len(tt.group), len(got))
+			for _, v := range tt.group {
+				assert.True(t, Contains(got, v.str))
 			}
 		})
 	}
@@ -113,13 +114,15 @@ func Test_GroupBy(t *testing.T) {
 func Test_Marshal(t *testing.T) {
 
 	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			str, err := etcdutil.Mmarshal(tt.data)
-			assert.NoError(t, err)
-			assert.Equal(t, len(tt.str), len(str))
-			assert.Equal(t, tt.str, str)
-			assert.True(t, reflect.DeepEqual(tt.str, str))
-		})
+		for _, ttt := range tt.group {
+			t.Run(tt.name, func(t *testing.T) {
+				str, err := etcdutil.Mmarshal(ttt.data)
+				assert.NoError(t, err)
+				assert.Equal(t, len(ttt.str), len(str))
+				assert.Equal(t, ttt.str, str)
+				assert.True(t, reflect.DeepEqual(ttt.str, str))
+			})
+		}
 	}
 }
 
@@ -128,12 +131,37 @@ func Test_Marshal(t *testing.T) {
 func Test_Unmarshal(t *testing.T) {
 
 	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			var input etcdutil.Model = util.DefaultStruct(tt.model).(etcdutil.Model)
-			err := etcdutil.Unmarshal(tt.str, input)
-			assert.NoError(t, err)
-			assert.Equal(t, tt.data, input)
-			assert.True(t, reflect.DeepEqual(tt.data, input))
-		})
+		for _, ttt := range tt.group {
+			t.Run(tt.name, func(t *testing.T) {
+				var input etcdutil.Model = util.DefaultStruct(ttt.model).(etcdutil.Model)
+				err := etcdutil.Unmarshal(ttt.str, input)
+				assert.NoError(t, err)
+				assert.Equal(t, ttt.data, input)
+				assert.True(t, reflect.DeepEqual(ttt.data, input))
+			})
+		}
+	}
+}
+
+
+
+func Test_MarshalUnmarshal(t *testing.T) {
+
+	for _, tt := range cases {
+		for _, ttt := range tt.group {
+			t.Run(tt.name, func(t *testing.T) {
+				str, err := etcdutil.Mmarshal(ttt.data)
+				assert.NoError(t, err)
+				assert.Equal(t, len(ttt.str), len(str))
+				assert.Equal(t, ttt.str, str)
+				assert.True(t, reflect.DeepEqual(ttt.str, str))
+
+				var input etcdutil.Model = util.DefaultStruct(ttt.model).(etcdutil.Model)
+				err = etcdutil.Unmarshal(str, input)
+				assert.NoError(t, err)
+				assert.Equal(t, ttt.data, input)
+				assert.True(t, reflect.DeepEqual(ttt.data, input))
+			})
+		}
 	}
 }

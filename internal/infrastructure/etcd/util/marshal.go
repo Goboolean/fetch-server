@@ -8,12 +8,28 @@ import (
 
 // GroupBy groups the list by the distinquisher that appears just after the prefix.
 // It assums that list is sorted by key.
-func GroupBy(list map[string]string, prefix string) []map[string]string {
+func GroupBy(list map[string]string) ([]map[string]string, error) {
 	var m = make(map[string]map[string]string)
 	var result []map[string]string
 
+	var _type string
+	for k := range list {
+		p := strings.Split(k, "/")[1]
+		if _type == "" {
+			_type = p
+		} else {
+			if _type != p {
+				return nil, ErrGivenTypeNotMatch
+			}
+		}
+	}
+
+	var prefix = fmt.Sprintf("/%s/", _type)
+
+	fmt.Println(prefix)
+
 	for k, v := range list {
-		p := strings.Split(strings.TrimPrefix(k, prefix), "/")[1]
+		p := strings.Split(strings.TrimPrefix(k, prefix), "/")[0]
 		if _, ok := m[p]; !ok {
 			m[p] = make(map[string]string)
 		}
@@ -22,7 +38,7 @@ func GroupBy(list map[string]string, prefix string) []map[string]string {
 	for _, v := range m {
 		result = append(result, v)
 	}
-	return result
+	return result, nil
 }
 
 
@@ -80,6 +96,22 @@ func Mmarshal(m Model) (map[string]string, error) {
 
 		var value = reflect.ValueOf(m).Elem().FieldByName(field.Name).String()
 		result[prefix+key] = value
+	}
+
+	return result, nil
+}
+
+func MarshalList(list []Model) (map[string]string, error) {
+	var result = make(map[string]string)
+
+	for _, v := range list {
+		m, err := Mmarshal(v)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range m {
+			result[k] = v
+		}
 	}
 
 	return result, nil
@@ -152,3 +184,20 @@ func Unmarshal(str map[string]string, m Model) error {
 
 	return nil
 }
+/*
+func UnmarshalGroup(str map[string]string, m Model) ([]Model, error) {
+	var result []Model
+
+	//groups := GroupBy(str, fmt.Sprintf("/%s/", m.Name()))
+
+	for _, group := range groups {
+		var _m = reflect.New(reflect.TypeOf(m).Elem()).Interface().(Model)
+		err := Unmarshal(group, _m)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, _m)
+	}
+
+	return result, nil
+}*/
