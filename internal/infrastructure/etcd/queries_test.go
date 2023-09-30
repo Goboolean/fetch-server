@@ -2,7 +2,6 @@ package etcd_test
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
@@ -55,16 +54,13 @@ func TestMain(m *testing.M) {
 
 func Test_Constructor(t *testing.T) {
 	t.Run("Ping", func(t *testing.T) {
-		if err := client.Ping(context.Background()); err != nil {
-			t.Fatal(err)
-		}
+		err := client.Ping(context.Background())
+		assert.NoError(t, err)
 	})
 }
 
 
 func Test_Worker(t *testing.T) {
-
-	fmt.Println("DONOTCACHE")
 
 	var workers []*etcd.Worker = []*etcd.Worker{
 		{ID: uuid.New().String(), Platform: "polygon", Status:   "active"},
