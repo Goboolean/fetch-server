@@ -30,6 +30,9 @@ func Setup() *etcd.Client {
 }
 
 func Teardown(c *etcd.Client) {
+	if err := c.Cleanup(); err != nil {
+		panic(err)
+	}
 	if err := c.Close(); err != nil {
 		panic(err)
 	}
