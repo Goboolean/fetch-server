@@ -30,6 +30,11 @@ func (c *Client) GetWorker(ctx context.Context, id string) (*Worker, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if len(resp.Kvs) == 0 {
+		return nil, ErrWorkerNotExists
+	}
+
 	m := etcdutil.PayloadToMap(resp)
 
 	var w Worker
@@ -41,7 +46,7 @@ func (c *Client) GetWorker(ctx context.Context, id string) (*Worker, error) {
 
 func (c *Client) GetAllWorkers(ctx context.Context) ([]*Worker, error) {
 	
-	resp, err := c.client.Get(context.Background(), etcdutil.GroupIdentifier("worker"), clientv3.WithPrefix())
+	resp, err := c.client.Get(context.Background(), etcdutil.Group("worker"), clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +77,6 @@ func (c *Client) DeleteWorker(ctx context.Context, id string) error {
 	_, err := c.client.Delete(context.Background(), etcdutil.Identifier("worker", id), clientv3.WithPrefix())
 	return err
 }
-
 
 
 func (c *Client) InsertOneProduct(ctx context.Context, p *Product) error {
@@ -112,6 +116,10 @@ func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
 		return nil, err
 	}
 
+	if len(resp.Kvs) == 0 {
+		return nil, ErrProductNotExists
+	}
+
 	m := etcdutil.PayloadToMap(resp)
 
 	var p Product
@@ -123,7 +131,7 @@ func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {
 
 func (c *Client) GetAllProducts(ctx context.Context) ([]*Product, error) {
 
-	resp, err := c.client.Get(context.Background(), etcdutil.GroupIdentifier("product"), clientv3.WithPrefix())
+	resp, err := c.client.Get(context.Background(), etcdutil.Group("product"), clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}

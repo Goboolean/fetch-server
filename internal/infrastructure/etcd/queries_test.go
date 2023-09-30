@@ -2,15 +2,16 @@ package etcd_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
-	"github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd"
+	_ "github.com/Goboolean/common/pkg/env"
 	"github.com/Goboolean/common/pkg/resolver"
+	"github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	_ "github.com/Goboolean/common/pkg/env"
 )
 
 
@@ -62,6 +63,8 @@ func Test_Constructor(t *testing.T) {
 
 
 func Test_Worker(t *testing.T) {
+
+	fmt.Println("DONOTCACHE")
 
 	var workers []*etcd.Worker = []*etcd.Worker{
 		{ID: uuid.New().String(), Platform: "polygon", Status:   "active"},

@@ -61,6 +61,6 @@ func (c *Client) Close() error {
 
 
 func (c *Client) Cleanup() error {
-	_, err := c.client.Delete(context.Background(), "", clientv3.WithPrefix())
+	_, err := c.client.Delete(context.Background(), "/", clientv3.WithPrefix())
 	return err
 }

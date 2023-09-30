@@ -26,12 +26,10 @@ func GroupBy(list map[string]string) ([]map[string]string, error) {
 		}
 	}
 
-	var prefix = GroupIdentifier(_type)
-
-	fmt.Println(prefix)
+	var prefix = Group(_type)
 
 	for k, v := range list {
-		p := strings.Split(strings.TrimPrefix(k, prefix), "/")[0]
+		p := strings.Split(strings.TrimPrefix(k, prefix), "/")[1]
 		if _, ok := m[p]; !ok {
 			m[p] = make(map[string]string)
 		}
@@ -172,11 +170,11 @@ func Unmarshal(str map[string]string, m Model) error {
 
 
 func Identifier(_type string, id string) string {
-	return fmt.Sprintf("/%s/%s/", _type, id)
+	return fmt.Sprintf("/%s/%s", _type, id)
 }
 
-func GroupIdentifier(_type string) string {
-	return fmt.Sprintf("/%s/", _type)
+func Group(_type string) string {
+	return fmt.Sprintf("/%s", _type)
 }
 
 func Field(_type string, id string, field string) string {
