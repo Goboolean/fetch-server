@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	_ "github.com/Goboolean/common/pkg/env"
 )
 
 

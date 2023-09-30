@@ -13,9 +13,11 @@ func (c *Client) InsertWorker(ctx context.Context, w *Worker) error {
 
 	txn := c.client.Txn(ctx)
 
+	var ops []clientv3.Op
 	for k, v := range payload {
-		txn = txn.Then(clientv3.OpPut(k, v))
+		ops = append(ops, clientv3.OpPut(k, v))
 	}
+	txn.Then(ops...)
 
 	_, err = txn.Commit()
 	return err
