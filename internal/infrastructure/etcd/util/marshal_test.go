@@ -1,13 +1,12 @@
 package etcdutil_test
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"reflect"
 	"testing"
 
 	etcdutil "github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd/util"
+	"github.com/Goboolean/fetch-system.master/internal/util"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -113,13 +112,9 @@ func Test_GroupBy(t *testing.T) {
 
 
 
-func deepCopy(src, dst interface{}) error {
-	var buf bytes.Buffer
-	if err := gob.NewEncoder(&buf).Encode(src); err != nil {
-		return err
-	}
-	return gob.NewDecoder(&buf).Decode(dst)
-}
+
+
+
 
 
 func Test_Marshal(t *testing.T) {
@@ -136,16 +131,15 @@ func Test_Marshal(t *testing.T) {
 }
 
 
+
 func Test_Unmarshal(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			var input etcdutil.Model
-			err := deepCopy(tt.data, &input)
+			var input etcdutil.Model = util.DefaultStruct(tt.model).(etcdutil.Model)
+			err := etcdutil.Unmarshal(tt.str, input)
 			assert.NoError(t, err)
-
-			err = etcdutil.Unmarshal(tt.str, tt.model)
-			assert.NoError(t, err)
+			assert.Equal(t, tt.data, input)
 			assert.True(t, reflect.DeepEqual(tt.data, input))
 		})
 	}

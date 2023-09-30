@@ -87,6 +87,68 @@ func Mmarshal(m Model) (map[string]string, error) {
 
 
 
-func Unmarshal(str map[string]string, i Model) error {
+func Unmarshal(str map[string]string, m Model) error {
+	t := reflect.TypeOf(m)
+
+	if t.Kind() != reflect.Ptr {
+		return ErrGivenNotAPointer
+	}
+	t = t.Elem()
+
+
+	var id string
+
+	for k, v := range str {
+		spl := strings.Split(k, "/")
+
+		_type := spl[1]
+		if _type != m.Name() {
+			return ErrGivenTypeNotMatch
+		}
+
+		_id := spl[2]
+		if id == "" {
+			id = _id
+		} else {
+			if id != _id {
+				return ErrGivenIdNotMatch
+			}
+		}
+
+		if len(spl) == 3 {
+			continue
+		}
+
+		key := spl[3]
+
+		var name string
+
+		for i := 0; i < t.NumField(); i++ {
+			field := t.Field(i)
+			if field.Tag.Get("etcd") == key {
+				name = field.Name
+			}
+		}
+
+		f := reflect.ValueOf(m).Elem().FieldByName(name)
+		if f.IsValid() == false || f.CanSet() == false {
+			return ErrFieldNotSettable
+		}
+
+		f.SetString(v)
+	}
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		if field.Tag.Get("etcd") == "" {
+			continue
+		}
+
+		if field.Tag.Get("etcd") == "id" {
+			reflect.ValueOf(m).Elem().FieldByName(field.Name).SetString(id)
+			break
+		}
+	}
+
 	return nil
 }
