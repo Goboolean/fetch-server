@@ -24,7 +24,6 @@ type Model interface {
 }
 
 
-
 // Policy for etcd semaphore
 
 // A. etcd key format

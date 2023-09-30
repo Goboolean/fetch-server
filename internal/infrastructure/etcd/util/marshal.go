@@ -51,8 +51,6 @@ func Mmarshal(m Model) (map[string]string, error) {
 		t = t.Elem()
 	}
 
-	fmt.Println(t)
-
 	var result = make(map[string]string)
 	var prefix string
 	var id string
@@ -73,10 +71,6 @@ func Mmarshal(m Model) (map[string]string, error) {
 	prefix = fmt.Sprintf("/%s/%s/", m.Name(), id)
 	result[strings.TrimSuffix(prefix, "/")] = ""
 
-	fmt.Println("prefix: ", prefix)
-	fmt.Println("id: ", id)
-	fmt.Println("len:", t.NumField())
-
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		key := field.Tag.Get("etcd")
@@ -90,6 +84,7 @@ func Mmarshal(m Model) (map[string]string, error) {
 
 	return result, nil
 }
+
 
 
 func Unmarshal(str map[string]string, i Model) error {
