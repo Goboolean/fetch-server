@@ -2,6 +2,7 @@ package etcd_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -36,6 +37,8 @@ func Teardown(c *etcd.Client) {
 	if err := c.Close(); err != nil {
 		panic(err)
 	}
+
+	fmt.Println("is this executed?")
 }
 
 func TestMain(m *testing.M) {
@@ -169,6 +172,6 @@ func Test_Product(t *testing.T) {
 	t.Run("GetAllProducts", func(t *testing.T) {
 		ps, err := client.GetAllProducts(context.Background())
 		assert.NoError(t, err)
-		assert.Equal(t, len(products)-1, len(ps))
+		assert.Equal(t, len(products), len(ps))
 	})
 }

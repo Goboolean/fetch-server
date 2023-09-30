@@ -83,17 +83,20 @@ func (c *Client) InsertOneProduct(ctx context.Context, p *Product) error {
 	payload, err := etcdutil.Mmarshal(p)
 
 	txn := c.client.Txn(ctx)
+	var ops []clientv3.Op
 
 	for k, v := range payload {
-		txn = txn.Then(clientv3.OpPut(k, v))
+		ops = append(ops, clientv3.OpPut(k, v))
 	}
 
+	txn.Then(ops...)
 	_, err = txn.Commit()
 	return err
 }
 
 func (c *Client) InsertProducts(ctx context.Context , p []*Product) error {
 	txn := c.client.Txn(ctx)
+	var ops []clientv3.Op
 
 	for _, v := range p {
 		payload, err := etcdutil.Mmarshal(v)
@@ -101,10 +104,11 @@ func (c *Client) InsertProducts(ctx context.Context , p []*Product) error {
 			return err
 		}
 		for k, v := range payload {
-			txn = txn.Then(clientv3.OpPut(k, v))
+			ops = append(ops, clientv3.OpPut(k, v))
 		}
 	}
 
+	txn.Then(ops...)
 	_, err := txn.Commit()
 	return err
 }
