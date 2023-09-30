@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"go.etcd.io/etcd/client/v3"
 )
 
 // GroupBy groups the list by the distinquisher that appears just after the prefix.
@@ -24,7 +26,7 @@ func GroupBy(list map[string]string) ([]map[string]string, error) {
 		}
 	}
 
-	var prefix = fmt.Sprintf("/%s/", _type)
+	var prefix = GroupIdentifier(_type)
 
 	fmt.Println(prefix)
 
@@ -184,20 +186,27 @@ func Unmarshal(str map[string]string, m Model) error {
 
 	return nil
 }
-/*
-func UnmarshalGroup(str map[string]string, m Model) ([]Model, error) {
-	var result []Model
 
-	//groups := GroupBy(str, fmt.Sprintf("/%s/", m.Name()))
 
-	for _, group := range groups {
-		var _m = reflect.New(reflect.TypeOf(m).Elem()).Interface().(Model)
-		err := Unmarshal(group, _m)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, _m)
+func Identifier(_type string, id string) string {
+	return fmt.Sprintf("/%s/%s/", _type, id)
+}
+
+func GroupIdentifier(_type string) string {
+	return fmt.Sprintf("/%s/", _type)
+}
+
+func Field(_type string, id string, field string) string {
+	return fmt.Sprintf("/%s/%s/%s", _type, id, field)
+}
+
+
+func PayloadToMap(res *clientv3.GetResponse) map[string]string {
+	var result = make(map[string]string)
+
+	for _, v := range res.Kvs {
+		result[string(v.Key)] = string(v.Value)
 	}
 
-	return result, nil
-}*/
+	return result
+}
