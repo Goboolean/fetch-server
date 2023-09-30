@@ -47,9 +47,10 @@ func toStringFormat(m Model, f reflect.StructField) string {
 func Mmarshal(m Model) (map[string]string, error) {
 	t := reflect.TypeOf(m)
 
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
+	if t.Kind() != reflect.Ptr {
+		return nil, ErrGivenNotAPointer
 	}
+	t = t.Elem()
 
 	var result = make(map[string]string)
 	var prefix string
@@ -62,7 +63,6 @@ func Mmarshal(m Model) (map[string]string, error) {
 		}
 
 		if field.Tag.Get("etcd") == "id" {
-
 			id = reflect.ValueOf(m).Elem().FieldByName(field.Name).String()
 			break
 		}
