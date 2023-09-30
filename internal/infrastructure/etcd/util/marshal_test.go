@@ -128,6 +128,8 @@ func Test_Marshal(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			str, err := etcdutil.Mmarshal(tt.data)
 			assert.NoError(t, err)
+			assert.Equal(t, len(tt.str), len(str))
+			assert.Equal(t, tt.str, str)
 			assert.True(t, reflect.DeepEqual(tt.str, str))
 		})
 	}
