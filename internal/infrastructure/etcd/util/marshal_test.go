@@ -1,13 +1,11 @@
 package etcdutil_test
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
 	etcdutil "github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd/util"
 	"github.com/Goboolean/fetch-system.master/internal/util"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -112,11 +110,6 @@ func Test_GroupBy(t *testing.T) {
 
 
 
-
-
-
-
-
 func Test_Marshal(t *testing.T) {
 
 	for _, tt := range cases {
@@ -143,9 +136,4 @@ func Test_Unmarshal(t *testing.T) {
 			assert.True(t, reflect.DeepEqual(tt.data, input))
 		})
 	}
-}
-
-
-func TestCreateUuid(t *testing.T) {
-	fmt.Println(uuid.New().String())
 }
