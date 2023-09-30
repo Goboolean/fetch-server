@@ -66,6 +66,11 @@ func (c *Client) UpdateWorkerStatus(ctx context.Context, id string, status strin
 	return err
 }
 
+func (c *Client) DeleteWorker(ctx context.Context, id string) error {
+	_, err := c.client.Delete(context.Background(), etcdutil.Identifier("worker", id), clientv3.WithPrefix())
+	return err
+}
+
 
 
 func (c *Client) InsertOneProduct(ctx context.Context, p *Product) error {
@@ -145,5 +150,10 @@ func (c *Client) UpdateProductStatus(ctx context.Context, id string, status stri
 
 func (c *Client) UpdateProductWorker(ctx context.Context, id string, worker string) error {
 	_, err := c.client.Put(context.Background(), etcdutil.Field("product", id, "worker"), worker)
+	return err
+}
+
+func (c *Client) DeleteProduct(ctx context.Context, id string) error {
+	_, err := c.client.Delete(context.Background(), etcdutil.Identifier("product", id), clientv3.WithPrefix())
 	return err
 }
