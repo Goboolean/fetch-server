@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Goboolean/shared/pkg/resolver"
+	"github.com/Goboolean/common/pkg/resolver"
 	"go.etcd.io/etcd/client/v3"
 )
 
@@ -22,8 +22,18 @@ func New(c *resolver.ConfigMap) (*Client, error) {
 		return nil, err
 	}
 
+	peer_host, exists, err := c.GetStringKeyOptional("PEER_HOST")
+	if err != nil {
+		return nil, err
+	}
+
+	host_list := []string{host}
+	if exists {
+		host_list = append(host_list, peer_host)
+	}
+
 	config := clientv3.Config{
-		Endpoints:   []string{host},
+		Endpoints:   host_list,
 		DialTimeout: 5 * time.Second,
 	}
 

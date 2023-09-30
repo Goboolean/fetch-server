@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd"
-	"github.com/Goboolean/shared/pkg/resolver"
+	"github.com/Goboolean/common/pkg/resolver"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -19,6 +19,7 @@ var client *etcd.Client
 func Setup() *etcd.Client {
 	c, err := etcd.New(&resolver.ConfigMap{
 		"HOST": os.Getenv("ETCD_HOST"),
+		"PEER_HOST": os.Getenv("ETCD_PEER_HOST"),
 	})
 	if err != nil {
 		panic(err)
