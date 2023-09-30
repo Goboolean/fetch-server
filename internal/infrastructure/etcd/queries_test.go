@@ -2,7 +2,6 @@ package etcd_test
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
@@ -37,13 +36,10 @@ func Teardown(c *etcd.Client) {
 	if err := c.Close(); err != nil {
 		panic(err)
 	}
-
-	fmt.Println("is this executed?")
 }
 
 func TestMain(m *testing.M) {
 	client = Setup()
-	defer Teardown(client)
 
 	log.SetLevel(log.TraceLevel)
 	log.SetFormatter(&log.TextFormatter{
@@ -51,6 +47,8 @@ func TestMain(m *testing.M) {
 	})
 
 	code := m.Run()
+	Teardown(client)
+
 	os.Exit(code)
 }
 
