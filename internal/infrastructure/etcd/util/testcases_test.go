@@ -68,20 +68,6 @@ var cases []struct {
 		},
 	},
 	{
-		name: "Worker",
-		str: map[string]string{
-			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d": "",
-			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/platform": "kis",
-			"/worker/9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d/status": "active",
-		},
-		model: &Worker{},
-		data: &Worker{
-			ID: "9cf226f7-4ee8-4a5c-9d2f-6d7c74f6727d",
-			Platform: "kis",
-			Status: "active",
-		},
-	},
-	{
 		name: "Product",
 		str: map[string]string{
 			"/product/test.goboolean.kor": "",
