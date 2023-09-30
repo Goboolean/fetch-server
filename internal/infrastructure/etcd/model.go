@@ -8,6 +8,10 @@ type Worker struct {
 	Status   string `etcd:"status"`   // active, waiting, dead
 }
 
+func (w *Worker) Name() string {
+	return "worker"
+}
+
 
 
 type Product struct {
@@ -16,4 +20,8 @@ type Product struct {
 	Symbol   string `etcd:"symbol"`   // identifier inside platform
 	Worker 	 string `etcd:"worker"`   // uuid format
 	Status   string `etcd:"status"`   // onsubscribe, notsubscribed
+}
+
+func (p *Product) Name() string {
+	return "product"
 }
