@@ -4,8 +4,9 @@ go 1.21.0
 
 require (
 	github.com/Goboolean/common v0.0.0-20230923111528-d34847091e57
-	github.com/Goboolean/shared v0.0.0-20230808130746-3025c3ee517b
+	github.com/google/uuid v1.3.0
 	github.com/lib/pq v1.10.9
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
 	go.etcd.io/etcd/client/v3 v3.5.9
 )
