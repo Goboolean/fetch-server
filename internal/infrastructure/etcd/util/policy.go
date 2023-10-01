@@ -28,5 +28,9 @@ type Model interface {
 
 // A. etcd key format
 // Key-value pair for specific usecase does not starts with /, should starts with its function directly.
-// Semaphore starts with semaphore
-// Second compartment means semaphore name
+// Semaphore starts with @, its name follows.
+
+
+func Semaphore(key string) string {
+	return "@" + key
+}
