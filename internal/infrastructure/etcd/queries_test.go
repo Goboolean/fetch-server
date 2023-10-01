@@ -77,6 +77,11 @@ func Test_Worker(t *testing.T) {
 		}
 	})
 
+	t.Run("InsertWorkerAlreadyExists", func(t *testing.T) {
+		err := client.InsertWorker(context.Background(), workers[0])
+		assert.Error(t, err)
+	})
+
 	t.Run("GetWorker", func(t *testing.T) {
 		for _, w := range workers {
 			worker, err := client.GetWorker(context.Background(), w.ID)
@@ -165,6 +170,11 @@ func Test_Product(t *testing.T) {
 		p, err := client.GetProduct(context.Background(), products[2].ID)
 		assert.NoError(t, err)
 		assert.Equal(t, products[2], p)
+	})
+
+	t.Run("InsertProductAlreadyExists", func(t *testing.T) {
+		err := client.InsertOneProduct(context.Background(), products[2])
+		assert.Error(t, err)
 	})
 
 	t.Run("GetAllProducts", func(t *testing.T) {

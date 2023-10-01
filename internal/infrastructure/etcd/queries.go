@@ -4,22 +4,34 @@ import (
 	"context"
 
 	"go.etcd.io/etcd/client/v3"
-	etcdutil "github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd/util"
+	"github.com/Goboolean/fetch-system.master/internal/infrastructure/etcd/util"
 )
 
 
 func (c *Client) InsertWorker(ctx context.Context, w *Worker) error {
 	payload, err := etcdutil.Mmarshal(w)
 
-	txn := c.client.Txn(ctx)
-
 	var ops []clientv3.Op
 	for k, v := range payload {
 		ops = append(ops, clientv3.OpPut(k, v))
 	}
-	txn.Then(ops...)
 
-	_, err = txn.Commit()
+	var conditions []clientv3.Cmp
+	for k := range payload {
+		conditions = append(conditions, clientv3.Compare(clientv3.Version(k), "=", 0))
+	}
+
+	resp, err := c.client.Txn(ctx).
+		If(conditions...).
+		Then(ops...).
+		Commit()
+
+	if err != nil {
+		return err
+	}
+	if flag := resp.Succeeded; !flag {
+		return ErrObjectExists
+	}
 	return err
 }
 
@@ -82,20 +94,34 @@ func (c *Client) DeleteWorker(ctx context.Context, id string) error {
 func (c *Client) InsertOneProduct(ctx context.Context, p *Product) error {
 	payload, err := etcdutil.Mmarshal(p)
 
-	txn := c.client.Txn(ctx)
-	var ops []clientv3.Op
 
+	var conditions []clientv3.Cmp
+	for k := range payload {
+		conditions = append(conditions, clientv3.Compare(clientv3.Version(k), "=", 0))
+	}
+
+	var ops []clientv3.Op
 	for k, v := range payload {
 		ops = append(ops, clientv3.OpPut(k, v))
 	}
 
-	txn.Then(ops...)
-	_, err = txn.Commit()
-	return err
+	resp, err := c.client.Txn(ctx).
+		If(conditions...).
+		Then(ops...).
+		Commit()
+
+	if err != nil {
+		return err
+	}
+	if flag := resp.Succeeded; !flag {
+		return ErrObjectExists
+	}
+	return nil
 }
 
 func (c *Client) InsertProducts(ctx context.Context , p []*Product) error {
-	txn := c.client.Txn(ctx)
+
+	var conditions []clientv3.Cmp
 	var ops []clientv3.Op
 
 	for _, v := range p {
@@ -105,12 +131,22 @@ func (c *Client) InsertProducts(ctx context.Context , p []*Product) error {
 		}
 		for k, v := range payload {
 			ops = append(ops, clientv3.OpPut(k, v))
+			conditions = append(conditions, clientv3.Compare(clientv3.Version(k), "=", 0))
 		}
 	}
 
-	txn.Then(ops...)
-	_, err := txn.Commit()
-	return err
+	resp, err := c.client.Txn(ctx).
+		If(conditions...).
+		Then(ops...).
+		Commit()
+
+	if err != nil {
+		return err
+	}
+	if flag := resp.Succeeded; !flag {
+		return ErrObjectExists
+	}
+	return nil
 }
 
 func (c *Client) GetProduct(ctx context.Context, id string) (*Product, error) {

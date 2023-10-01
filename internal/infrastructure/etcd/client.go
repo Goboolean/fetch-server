@@ -6,6 +6,7 @@ import (
 
 	"github.com/Goboolean/common/pkg/resolver"
 	"go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/concurrency"
 )
 
 
@@ -41,6 +42,11 @@ func New(c *resolver.ConfigMap) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	s, err := concurrency.NewSession(client)
+	s.Done()
+
+	concurrency.NewLocker(s, "lock")
 
 	return &Client{
 		client: client,
