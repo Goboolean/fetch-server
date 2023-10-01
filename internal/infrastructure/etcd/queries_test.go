@@ -3,7 +3,9 @@ package etcd_test
 import (
 	"context"
 	"os"
+	"sync"
 	"testing"
+	"time"
 
 	_ "github.com/Goboolean/common/pkg/env"
 	"github.com/Goboolean/common/pkg/resolver"
@@ -11,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"go.etcd.io/etcd/client/v3/concurrency"
 )
 
 
@@ -181,5 +184,58 @@ func Test_Product(t *testing.T) {
 		ps, err := client.GetAllProducts(context.Background())
 		assert.NoError(t, err)
 		assert.Equal(t, len(products), len(ps))
+	})
+}
+
+
+func Test_Mutex(t *testing.T) {
+
+	var mu1 *concurrency.Mutex
+	var mu2 *concurrency.Mutex
+
+	var key string = "test"
+
+	t.Run("AquireMutex", func(t *testing.T) {
+		var err error
+		mu1, err = client.NewMutex(context.Background(), key)
+		assert.NoError(t, err)
+		mu2, err = client.NewMutex(context.Background(), key)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Lock", func(t *testing.T) {
+		err := mu1.Lock(context.Background())
+		assert.NoError(t, err)
+
+		err = mu2.TryLock(context.Background())
+		assert.Error(t, err)
+	})
+
+	t.Run("WaitLock", func(t *testing.T) {
+
+		var wg sync.WaitGroup
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+
+			time.Sleep(1 * time.Second)
+			err := mu1.Unlock(context.Background())
+			assert.NoError(t, err)
+		}()
+
+		err := mu2.Lock(context.Background())
+		assert.NoError(t, err)
+		wg.Wait()
+	})
+
+	t.Run("Unlock", func(t *testing.T) {
+		err := mu1.Unlock(context.Background())
+		assert.NoError(t, err)
+
+		err = mu2.TryLock(context.Background())
+		assert.NoError(t, err)
+
+		err = mu2.Unlock(context.Background())
+		assert.NoError(t, err)
 	})
 }
