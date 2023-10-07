@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package grpcapi;
+
+option go_package = "github.com/Goboolean/fetch-system.master/api/grpc;grpcapi";
+
+service Worker {
+  rpc Register (RegisterRequest) returns (RegisterResponse) {}
+  rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
+}
+
+
+
+enum Platform {
+    PLATFORM_UNKNOWN = 0;
+    PLATFORM_KIS = 1;
+    PLATFORM_BUYCYCLE = 2;
+    PLATFORM_POLYGON = 3;
+}
+
+message ProductDetail {
+    string product_id = 1;
+    string Platform = 2;
+    string symbol = 3;    
+}
+
+enum Result {
+    RESULT_FAILURE = 0;
+    RESULT_SUCCESS = 1;
+}
+
+enum Status {
+    STATUS_HEALTHY = 0;
+    STATUS_INVALID = 1;
+    STATUS_PANIC   = 2;
+    STATUS_KILL    = 3;
+}
+
+
+
+message RegisterRequest {
+    string worker_id = 1;
+}
+
+message RegisterResponse {}
+
+message HealthCheckRequest {
+    string worker_id      = 1;
+    string trancaction_id = 2;
+    Status status         = 3;
+}
+
+message HealthCheckResponse {
+    Status status                         = 1;
+    repeated ProductDetail product_detail = 2;
+}
